@@ -7,13 +7,15 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 import optuna
 import os
+from draw import ImageGenerator
+import tkinter as tk
 
 # Problem Information
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 N_INPUT = 28 * 28
 N_CLASSES = 10
 EPOCHS = 10
-BATCH_SIZE = 256
+BATCH_SIZE = 1
 N_TRIALS = 100
 NUM_WORKERS = 8
 MODEL_SAVE_PATH = 'models'
@@ -149,11 +151,17 @@ def main():
         model = load_model(MODEL_TO_LOAD)
         loaders = get_data_loaders()
 
-        train_accuracy = compute_accuracy(model, loaders['train'])
-        test_accuracy = compute_accuracy(model, loaders['test'])
+        root = tk.Tk()
+        root.wm_geometry("%dx%d+%d+%d" % (400, 400, 10, 10))
+        root.config(bg='white')
+        ImageGenerator(root, 10, 10, model)
+        root.mainloop()
 
-        print('Train Accuracy:', train_accuracy)
-        print('Test Accuracy:', test_accuracy)
+        # train_accuracy = compute_accuracy(model, loaders['train'])
+        # test_accuracy = compute_accuracy(model, loaders['test'])
+        #
+        # print('Train Accuracy:', train_accuracy)
+        # print('Test Accuracy:', test_accuracy)
 
     else:
         study = optuna.create_study(direction='maximize')
